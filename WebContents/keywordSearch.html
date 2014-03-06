@@ -1,0 +1,55 @@
+<html>
+<head><title>Search</title>
+<script type="text/javascript" src="autosuggest.js" ></script>
+<script type="text/javascript" src="suggestiondata.js" ></script>
+<link rel="stylesheet" type="text/css" href="autosuggest.css" ></link> 
+
+<script>
+	
+	var xmlHttp;
+	
+    function sendAjaxRequest(input)
+    {
+      xmlHttp = new XMLHttpRequest(); // works only for Firefox, Safari, ...
+
+      // set the server response handler
+      xmlHttp.onreadystatechange = showSuggestion;
+
+      // send the request to the server
+      xmlHttp.open("GET", "suggest?q="+input);
+      xmlHttp.send(null);
+    }
+
+    function showSuggestion() 
+    {
+      while(xmlHttp.readyState!=4);
+      
+      if (xmlHttp.readyState == 4) {
+        response = xmlHttp.responseText;
+        response = response.replace(/</g, "&lt;");
+        response = response.replace(/>/g, "&gt;");
+        return eval(response);
+        //document.getElementById("suggestion").innerHTML = response;
+      }
+    }
+    
+    window.onload = function () {
+        var oTextbox = new AutoSuggestControl(document.getElementById("txt1"), new StateSuggestions());        
+    }
+	function onkeyup(event) {
+		sendAjaxRequest(document.getElementById("txt1").value);
+	}
+	
+</script>
+
+</head>
+<form name="input" action="http://localhost:8080/eBay/search" method="get">
+
+Search keyword: <input type="text" name="q" id="txt1"/>
+<INPUT TYPE="hidden" NAME="numResultsToSkip" VALUE="0">
+<INPUT TYPE="hidden" NAME="numResultsToReturn" VALUE="15">
+
+<input type="submit" value="Submit" />
+
+</form> 
+<html>
